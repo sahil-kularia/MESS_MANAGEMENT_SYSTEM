@@ -1,7 +1,4 @@
-import React, { useState, useEffect } from "react";
-import axios from "axios";
-
-// const API_BASE = import.meta.env.VITE_API_URL;
+import React, { useState } from "react";
 
 export default function Ngo() {
   const [ngoForm, setNgoForm] = useState({
@@ -23,21 +20,7 @@ export default function Ngo() {
     wheat: 5,
   });
 
-  const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
-
-  // Load NGOs from backend
-  useEffect(() => {
-    setLoading(true);
-    axios
-      .get(`${API_BASE}/ngos`)
-      .then((res) => setNgos(res.data))
-      .catch((err) => {
-        console.error("Failed to load NGOs:", err);
-        setError("Failed to fetch NGO data.");
-      })
-      .finally(() => setLoading(false));
-  }, []);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -63,7 +46,7 @@ export default function Ngo() {
     }));
   };
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = (e) => {
     e.preventDefault();
     setError("");
 
@@ -75,22 +58,19 @@ export default function Ngo() {
         dal: Number(ngoForm.foodRequired.dal),
         wheat: Number(ngoForm.foodRequired.wheat),
       },
+      _id: Date.now(), // temporary unique ID
     };
 
-    try {
-      const res = await axios.post(`${API_BASE}/ngos`, newNGO);
-      setNgos((prev) => [res.data, ...prev]);
-      setNgoForm({
-        name: "",
-        location: "",
-        phone: "",
-        people: "",
-        foodRequired: { rice: "", dal: "", wheat: "" },
-      });
-    } catch (err) {
-      console.error("Failed to submit NGO:", err);
-      setError("Failed to register NGO.");
-    }
+    setNgos((prev) => [newNGO, ...prev]);
+
+    // Reset form
+    setNgoForm({
+      name: "",
+      location: "",
+      phone: "",
+      people: "",
+      foodRequired: { rice: "", dal: "", wheat: "" },
+    });
   };
 
   return (
@@ -182,7 +162,6 @@ export default function Ngo() {
             />
           </label>
 
-          {/* Food requirements */}
           {["rice", "dal", "wheat"].map((item) => (
             <label key={item} className="flex flex-col text-gray-700 text-lg">
               {item.charAt(0).toUpperCase() + item.slice(1)} Required (kg)
@@ -211,9 +190,7 @@ export default function Ngo() {
         <h2 className="text-3xl font-extrabold text-blue-800 mb-8 text-center">
           Registered NGOs
         </h2>
-        {loading ? (
-          <p className="text-center text-lg">Loading NGOs...</p>
-        ) : ngos.length === 0 ? (
+        {ngos.length === 0 ? (
           <p className="text-center text-gray-600 text-lg font-semibold">
             No NGOs registered yet.
           </p>
@@ -237,9 +214,9 @@ export default function Ngo() {
                 <div className="text-lg text-gray-700">
                   <strong>🍽️ Food Needed:</strong>
                   <ul className="list-disc list-inside mt-1">
-                    {/* <li>Rice: {ngo.foodRequired.rice} kg</li> */}
-                    {/* <li>Dal: {ngo.foodRequired.dal} kg</li> */}
-                    {/* <li>Wheat: {ngo.foodRequired.wheat} kg</li> */}
+                    <li>Rice: {ngo.foodRequired.rice} kg</li>
+                    <li>Dal: {ngo.foodRequired.dal} kg</li>
+                    <li>Wheat: {ngo.foodRequired.wheat} kg</li>
                   </ul>
                 </div>
               </div>
