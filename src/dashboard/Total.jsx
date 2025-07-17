@@ -8,7 +8,7 @@ export default function StudentMealDashboard() {
   useEffect(() => {
     async function fetchData() {
       try {
-        const res = await fetch("http://localhost:3000/student/all");
+        const res = await fetch("https://thaparmess.netlify.app/student/all");
         if (!res.ok) throw new Error("Failed to fetch data");
         const json = await res.json();
 

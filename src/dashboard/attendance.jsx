@@ -12,7 +12,7 @@ export default function Attendance() {
   async function submitrollno(e) {
     e.preventDefault();
     try {
-      const response = await axios.post("http://localhost:3000/student/food", fooddata);
+      const response = await axios.post("https://thaparmess.netlify.app/student", fooddata);
       localStorage.setItem("student", JSON.stringify(response.data));
       setFooddata({
         rollno: "",
