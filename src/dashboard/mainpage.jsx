@@ -1,6 +1,12 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 export default function MessDashboard() {
+  const navigate = useNavigate();
+
+  const navtotal = () => {
+    navigate("/total");
+  }
   const [menu, setMenu] = useState({
     date: new Date().toLocaleDateString(),
     breakfast: ["Poha", "Tea", "Banana"],
@@ -217,6 +223,32 @@ export default function MessDashboard() {
             <span>People It Could Feed</span>
           </div>
           <p>{Math.floor(leftoverFood * 2.5)} persons</p>
+        </div>
+
+         <div className="bg-green-700 hover:bg-green-800 cursor-pointer rounded-3xl shadow-xl p-10 flex-1 text-center text-white font-extrabold text-4xl select-none transition">
+          <div className="mb-3 flex justify-center items-center gap-3">
+            <svg
+              className="w-10 h-10"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              viewBox="0 0 24 24"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M12 8c-1.657 0-3 1.567-3 3.5S10.343 15 12 15s3-1.567 3-3.5S13.657 8 12 8z"
+              ></path>
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M19 21v-2a4 4 0 00-8 0v2"
+              ></path>
+            </svg>
+            <span onClick={navtotal}>TOTAL STUDENTS</span>
+          </div>
+          <p></p>
         </div>
       </footer>
     </div>

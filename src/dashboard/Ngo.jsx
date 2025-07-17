@@ -1,12 +1,17 @@
 import React, { useState, useEffect } from "react";
 
 export default function Ngo() {
+  // Update ngoForm state to hold multiple food quantities
   const [ngoForm, setNgoForm] = useState({
     name: "",
     location: "",
     phone: "",
     people: "",
-    foodQuantity: "",
+    foodRequired: {
+      rice: "",
+      dal: "",
+      wheat: "",
+    },
   });
 
   const [ngos, setNgos] = useState(() => {
@@ -14,13 +19,49 @@ export default function Ngo() {
     return saved ? JSON.parse(saved) : [];
   });
 
+  const [availableFood, setAvailableFood] = useState(() => {
+    const saved = localStorage.getItem("availableFood");
+    return saved
+      ? JSON.parse(saved)
+      : {
+          rice: 8,
+          dal: 3,
+          wheat: 5,
+        };
+  });
+
   useEffect(() => {
     localStorage.setItem("ngosList", JSON.stringify(ngos));
   }, [ngos]);
 
+  useEffect(() => {
+    localStorage.setItem("availableFood", JSON.stringify(availableFood));
+  }, [availableFood]);
+
+  // For NGO form fields (name, location, phone, people)
   const handleChange = (e) => {
     const { name, value } = e.target;
     setNgoForm((prev) => ({ ...prev, [name]: value }));
+  };
+
+  // For foodRequired fields inside ngoForm
+  const handleFoodRequiredChange = (e) => {
+    const { name, value } = e.target;
+    setNgoForm((prev) => ({
+      ...prev,
+      foodRequired: {
+        ...prev.foodRequired,
+        [name]: value,
+      },
+    }));
+  };
+
+  const handleFoodChange = (e) => {
+    const { name, value } = e.target;
+    setAvailableFood((prev) => ({
+      ...prev,
+      [name]: Number(value),
+    }));
   };
 
   const handleSubmit = (e) => {
@@ -29,6 +70,12 @@ export default function Ngo() {
     const newNGO = {
       ...ngoForm,
       id: Date.now(),
+      // convert foodRequired values to numbers for safety
+      foodRequired: {
+        rice: Number(ngoForm.foodRequired.rice),
+        dal: Number(ngoForm.foodRequired.dal),
+        wheat: Number(ngoForm.foodRequired.wheat),
+      },
     };
 
     setNgos((prev) => [...prev, newNGO]);
@@ -38,12 +85,37 @@ export default function Ngo() {
       location: "",
       phone: "",
       people: "",
-      foodQuantity: "",
+      foodRequired: {
+        rice: "",
+        dal: "",
+        wheat: "",
+      },
     });
   };
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-blue-100 via-blue-50 to-white p-8 max-w-6xl mx-auto">
+      {/* Food Stock Section */}
+      <section className="bg-white rounded-xl shadow-lg p-6 mb-10">
+        <h2 className="text-2xl font-bold text-blue-800 mb-4">Available Food Stock (kg)</h2>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          {Object.entries(availableFood).map(([food, quantity]) => (
+            <label key={food} className="flex flex-col text-gray-700 text-lg">
+              {food.charAt(0).toUpperCase() + food.slice(1)}
+              <input
+                type="number"
+                name={food}
+                value={quantity}
+                onChange={handleFoodChange}
+                min="0"
+                className="mt-2 p-3 border rounded-lg border-blue-300 focus:ring-2 focus:ring-blue-400 focus:outline-none text-lg"
+              />
+            </label>
+          ))}
+        </div>
+      </section>
+
+      {/* Header */}
       <header className="flex justify-between items-center mb-12">
         <h1 className="text-4xl font-extrabold text-blue-800">MANAGE FOOD IN HOSTEL</h1>
         <button
@@ -65,6 +137,7 @@ export default function Ngo() {
         </h2>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          {/* NGO details */}
           <label className="flex flex-col text-gray-700 text-lg">
             NGO Name
             <input
@@ -114,17 +187,45 @@ export default function Ngo() {
               placeholder="People in NGO"
             />
           </label>
-          <label className="flex flex-col text-gray-700 text-lg md:col-span-2">
-            Food Quantity Required (in kg)
+
+          {/* Food quantities */}
+          <label className="flex flex-col text-gray-700 text-lg">
+            Rice Required (kg)
             <input
               type="number"
-              name="foodQuantity"
-              value={ngoForm.foodQuantity}
-              onChange={handleChange}
-              min="1"
+              name="rice"
+              value={ngoForm.foodRequired.rice}
+              onChange={handleFoodRequiredChange}
+              min="0"
               required
               className="mt-2 p-3 border rounded-lg border-blue-300 focus:ring-2 focus:ring-blue-400 focus:outline-none text-lg"
-              placeholder="Quantity needed"
+              placeholder="Rice quantity"
+            />
+          </label>
+          <label className="flex flex-col text-gray-700 text-lg">
+            Dal Required (kg)
+            <input
+              type="number"
+              name="dal"
+              value={ngoForm.foodRequired.dal}
+              onChange={handleFoodRequiredChange}
+              min="0"
+              required
+              className="mt-2 p-3 border rounded-lg border-blue-300 focus:ring-2 focus:ring-blue-400 focus:outline-none text-lg"
+              placeholder="Dal quantity"
+            />
+          </label>
+          <label className="flex flex-col text-gray-700 text-lg">
+            Wheat Required (kg)
+            <input
+              type="number"
+              name="wheat"
+              value={ngoForm.foodRequired.wheat}
+              onChange={handleFoodRequiredChange}
+              min="0"
+              required
+              className="mt-2 p-3 border rounded-lg border-blue-300 focus:ring-2 focus:ring-blue-400 focus:outline-none text-lg"
+              placeholder="Wheat quantity"
             />
           </label>
         </div>
@@ -163,9 +264,14 @@ export default function Ngo() {
                 <p className="text-lg text-gray-700 mb-1">
                   <strong>👥 People:</strong> {ngo.people}
                 </p>
-                <p className="text-lg text-gray-700">
-                  <strong>🍽️ Food Needed:</strong> {ngo.foodQuantity} kg
-                </p>
+                <div className="text-lg text-gray-700">
+                  <strong>🍽️ Food Needed:</strong>
+                  <ul className="list-disc list-inside mt-1">
+                    <li>Rice: {ngo.foodRequired.rice} kg</li>
+                    <li>Dal: {ngo.foodRequired.dal} kg</li>
+                    <li>Wheat: {ngo.foodRequired.wheat} kg</li>
+                  </ul>
+                </div>
               </div>
             ))}
           </div>

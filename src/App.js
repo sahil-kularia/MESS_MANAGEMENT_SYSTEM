@@ -7,6 +7,10 @@ import MessDashboard from './dashboard/mainpage';
 import Landing from './dashboard/landing';
 import { Routes,Route } from 'react-router-dom';
 import Attendance from './dashboard/attendance'
+import Option from './dashboard/Option';
+import Bar from './dashboard/barcode';
+import Login from './dashboard/login';
+import Total from './dashboard/Total';
 
 function App() {
   return (
@@ -28,9 +32,10 @@ function App() {
 <Routes>
   <Route path='/' element={<Landing />} />
   <Route path='/menu' element={<MessDashboard />} />
-  <Route path='/mess' element={<Dashboard />} />
+  <Route path='/mess' element={<Login/>} />
   <Route path='/ngo' element={<Ngo/>} />
   <Route path='/student' element={<Attendance/>} />
+  <Route path ="/total" element={<Total/>}></Route>
 </Routes>
 
    </div>
