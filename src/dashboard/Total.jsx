@@ -9,6 +9,7 @@ export default function StudentMealDashboard() {
     async function fetchData() {
       try {
         const res = await fetch("https://thaparmess.netlify.app/student/all");
+        //  const res = await fetch("https:localhost3000/student/all");
         if (!res.ok) throw new Error("Failed to fetch data");
         const json = await res.json();
 
