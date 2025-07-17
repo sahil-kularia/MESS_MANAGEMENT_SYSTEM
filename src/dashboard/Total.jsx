@@ -7,30 +7,47 @@ export default function StudentMealDashboard() {
 
   useEffect(() => {
     async function fetchData() {
+      // try {
+      //   const res = await fetch("https://thaparmess.netlify.app/student/all");
+      //   //  const res = await fetch("https:localhost3000/student/all");
+      //   if (!res.ok) throw new Error("Failed to fetch data");
+      //   const json = await res.json();
+
+      //   setData(json);
+
+      //   // Calculate daily totals from students data
+      //   const daily = {};
+      //   json.students.forEach((student) => {
+      //     const dateStr = new Date(student.date).toISOString().slice(0, 10);
+      //     if (!daily[dateStr]) {
+      //       daily[dateStr] = { breakfast: 0, lunch: 0, dinner: 0 };
+      //     }
+      //     if (student.breakfast) daily[dateStr].breakfast++;
+      //     if (student.lunch) daily[dateStr].lunch++;
+      //     if (student.dinner) daily[dateStr].dinner++;
+      //   });
+
+      //   setDailyTotals(daily);
+      // } catch (err) {
+      //   console.error(err);
+      // }
+
+
+
+
+
       try {
-        const res = await fetch("https://thaparmess.netlify.app/student/all");
-        //  const res = await fetch("https:localhost3000/student/all");
-        if (!res.ok) throw new Error("Failed to fetch data");
-        const json = await res.json();
+  const res = await fetch("https://thaparmess.netlify.app/student/all");
+  if (!res.ok || !res.headers.get("content-type")?.includes("application/json")) {
+    throw new Error("Invalid response from server");
+  }
+  const json = await res.json();
+  setData(json);
+  // Continue with processing...
+} catch (err) {
+  console.error("Fetch error:", err);
+}
 
-        setData(json);
-
-        // Calculate daily totals from students data
-        const daily = {};
-        json.students.forEach((student) => {
-          const dateStr = new Date(student.date).toISOString().slice(0, 10);
-          if (!daily[dateStr]) {
-            daily[dateStr] = { breakfast: 0, lunch: 0, dinner: 0 };
-          }
-          if (student.breakfast) daily[dateStr].breakfast++;
-          if (student.lunch) daily[dateStr].lunch++;
-          if (student.dinner) daily[dateStr].dinner++;
-        });
-
-        setDailyTotals(daily);
-      } catch (err) {
-        console.error(err);
-      }
     }
 
     fetchData();
